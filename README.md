@@ -1,0 +1,1 @@
+Strings colors converter! Project development is in the way, yay!
