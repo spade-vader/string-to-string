@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">String To String</string>
+    <string name="input_screen_label">Which thread is a target?</string>
+    <string name="manufacturer">Manufacturer</string>
+    <string name="to_apply_settings">Press \"Find replacement!\" button to apply settings.</string>
+    <string name="colorCode">Color Code</string>
+    <string name="chosen_string">Chosen string</string>
+    <string name="find_replacement">Find replacement!</string>
+    <string name="no_matches">No matches found yet!</string>
+    <string name="loading_colors">We are looking for threads, please wait!</string>
+    <string name="choose_thread">Choose thread</string>
+    <string name="close">Close</string>
+    <string name="manufacturers">Manufacturers</string>
+    <string name="choose_manufacturers">Choose manufacturers</string>
+    <string name="round_percent">Round percents</string>
+    <string name="perfect_mode">Search 100% match only</string>
+    <string name="search_settings">Search Settings</string>
+    <string name="dark_theme">Dark Theme</string>
+    <string name="language">Language</string>
+    <string name="developer_mode">Developer Mode</string>
+    <string name="about_app">About app</string>
+    <string name="app_description">String to String helps embroiderers to match threads of different colors and companies more efficiently and faster. So far, unfortunately, we have not been able to connect all the companies in the world here, but we are trying to expand the list as we receive offers! If you like the app, you can leave a review and rate us. We assure you that we listen to every user. Thank you for choosing us!</string>
+    <string name="app_version">0.0.1 beta</string>
+</resources>
