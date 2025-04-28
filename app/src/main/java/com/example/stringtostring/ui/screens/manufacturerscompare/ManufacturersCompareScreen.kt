@@ -134,7 +134,7 @@ fun ManufacturersCompareOutputScreen(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Show no matches")
+                Text(stringResource(R.string.show_no_matches))
                 Switch(
                     checked = viewModel.isNoMatchShow,
                     onCheckedChange = { viewModel.toggleNoMatchShow() },

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,12 +19,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.example.stringtostring.R
 import com.example.stringtostring.model.toUiModel
+import com.example.stringtostring.ui.screens.shelve.ShelveViewModel
 import com.example.stringtostring.ui.theme.Dimens
 import com.example.stringtostring.ui.util.ThreadInfoRow
 
 @Composable
 fun ColorsMatcherOutputScreen(
     viewModel: ColorsMatcherViewModel,
+    shelveViewModel: ShelveViewModel,
     modifier: Modifier = Modifier
 ) {
     val matches by viewModel::matches
@@ -50,6 +53,11 @@ fun ColorsMatcherOutputScreen(
                         thread = match.toUiModel(manufacturerName),
                         percent = percent
                     )
+                    IconButton(
+                        onClick = { /* TODO shelveViewModel.addToShelve(it) */ }
+                    ) {
+
+                    }
                 }
             }
         }

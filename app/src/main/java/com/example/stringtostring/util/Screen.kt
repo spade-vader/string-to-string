@@ -22,6 +22,7 @@ import com.example.stringtostring.ui.screens.manufacturerscompare.ManufacturersC
 import com.example.stringtostring.ui.screens.manufacturerscompare.ManufacturersCompareViewModel
 import com.example.stringtostring.ui.screens.shelve.ShelveScreen
 
+// TODO поменять иконки нормально
 sealed class Screen(val route: String, val icon: ImageVector) {
     object ColorsMaster : Screen("colorsMaster", Icons.Default.Search)
     object ManufacturersCompare : Screen("manufacturersCompare", Icons.Filled.CheckCircle)
