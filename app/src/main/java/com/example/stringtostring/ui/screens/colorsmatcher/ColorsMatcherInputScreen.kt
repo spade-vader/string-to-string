@@ -1,5 +1,6 @@
 package com.example.stringtostring.ui.screens.colorsmatcher
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -51,13 +52,17 @@ fun ColorsMatcherInputScreen(
     viewModel: ColorsMatcherViewModel,
     modifier: Modifier = Modifier
 ) {
+    val selectedThread by viewModel::selectedThread
+    val selectedManufacturer by viewModel::selectedManufacturer
+
     Column(
         modifier = modifier
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        if (viewModel.selectedThread == null) {
+        AnimatedVisibility(
+            visible = selectedThread == null
+        ) {
             Text(text = stringResource(R.string.input_screen_label),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(Dimens.Medium))
@@ -69,28 +74,38 @@ fun ColorsMatcherInputScreen(
             onManufacturerSelected = { viewModel.onManufacturerSelected(it) },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(Dimens.Medium)
+                .padding(Dimens.Small)
         )
 
-        if (viewModel.selectedManufacturer != null) {
+        AnimatedVisibility(
+            visible = selectedManufacturer != null
+        ) {
             ColorCodeInputField(
                 viewModel = viewModel,
                 onColorCodeChange = { viewModel.onColorCodeInputChanged(it) },
                 threads = viewModel.threads,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(Dimens.Medium)
+                    .padding(Dimens.Small)
             )
         }
 
-        if (viewModel.selectedThread != null) {
-            val selectedThreadUiModel = viewModel.selectedThread!!.toUiModel(viewModel.selectedManufacturer!!.name)
-            SelectedThread(thread = selectedThreadUiModel)
-            FindButtonAndSearchSettings(
-                onClickButton = { viewModel.findMatches() },
-                viewModel = viewModel,
-                modifier = Modifier.padding(horizontal = Dimens.Medium)
-            )
+        AnimatedVisibility(
+            visible = selectedThread != null
+        ) {
+            if (selectedThread != null) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    val selectedThreadUiModel = viewModel.selectedThread!!.toUiModel(viewModel.selectedManufacturer!!.name)
+                    SelectedThread(thread = selectedThreadUiModel)
+                    FindButtonAndSearchSettings(
+                        onClickButton = { viewModel.findMatches() },
+                        viewModel = viewModel,
+                        modifier = Modifier.padding(horizontal = Dimens.Medium)
+                    )
+                }
+            }
         }
     }
 }

@@ -23,7 +23,7 @@ abstract class AppDatabase : RoomDatabase() {
                     "threads.db"
                 )
                     .createFromAsset("threads.db")
-                    .fallbackToDestructiveMigration()
+                    .fallbackToDestructiveMigration(false)
                     .build()
                 INSTANCE = instance
                 instance

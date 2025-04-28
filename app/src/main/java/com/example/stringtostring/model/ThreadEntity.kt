@@ -3,6 +3,7 @@ package com.example.stringtostring.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
@@ -15,7 +16,8 @@ import androidx.room.PrimaryKey
             onDelete = ForeignKey.NO_ACTION,
             onUpdate = ForeignKey.NO_ACTION
         )
-    ])
+    ],
+    indices = [Index(value = ["manufacturer_id"])])
 data class ThreadEntity (
     @PrimaryKey(autoGenerate = true) val id: Int,
     @ColumnInfo(name = "color_code") val colorCode: String,

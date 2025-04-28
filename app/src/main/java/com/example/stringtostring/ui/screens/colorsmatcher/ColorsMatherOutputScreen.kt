@@ -1,5 +1,8 @@
 package com.example.stringtostring.ui.screens.colorsmatcher
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,14 +26,23 @@ fun ColorsMatcherOutputScreen(
     viewModel: ColorsMatcherViewModel,
     modifier: Modifier = Modifier
 ) {
-    if (!viewModel.matches.isNullOrEmpty() && viewModel.selectedThread != null) {
+    val matches by viewModel::matches
+    val selectedThread by viewModel::selectedThread
+
+    AnimatedVisibility(
+        visible = !matches.isNullOrEmpty() && selectedThread != null,
+        enter = expandVertically(),
+        exit = shrinkVertically()
+    ) {
         LazyColumn(
             modifier = modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(Dimens.Small),
             horizontalAlignment = Alignment.Start
         ) {
             items(viewModel.matches!!) { match ->
-                val manufacturerName = viewModel.manufacturers.find { it.id == match.thread.manufacturerId }?.name ?: "Unknown"
+                val manufacturerName =
+                    viewModel.manufacturers.find { it.id == match.thread.manufacturerId }?.name
+                        ?: "Unknown"
                 val percent = viewModel.getPercent(match.percent)
 
                 Row() {
@@ -41,7 +53,9 @@ fun ColorsMatcherOutputScreen(
                 }
             }
         }
-    } else {
+    }
+
+    if (matches.isNullOrEmpty() || selectedThread == null) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
