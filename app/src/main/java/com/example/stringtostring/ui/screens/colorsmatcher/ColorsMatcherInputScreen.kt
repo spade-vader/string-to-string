@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
@@ -45,11 +46,13 @@ import com.example.stringtostring.model.ThreadEntity
 import com.example.stringtostring.model.ThreadUiModel
 import com.example.stringtostring.model.toUiModel
 import com.example.stringtostring.ui.screens.colorsmatcher.util.SettingsDialog
+import com.example.stringtostring.ui.screens.shelve.ShelveViewModel
 import com.example.stringtostring.ui.theme.Dimens
 
 @Composable
 fun ColorsMatcherInputScreen(
     viewModel: ColorsMatcherViewModel,
+    shelveViewModel: ShelveViewModel,
     modifier: Modifier = Modifier
 ) {
     val selectedThread by viewModel::selectedThread
@@ -98,7 +101,14 @@ fun ColorsMatcherInputScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     val selectedThreadUiModel = viewModel.selectedThread!!.toUiModel(viewModel.selectedManufacturer!!.name)
-                    SelectedThread(thread = selectedThreadUiModel)
+                    SelectedThread(
+                        thread = selectedThreadUiModel,
+                        onAddThreadButtonClick = { shelveViewModel.onFavoriteIconClick(
+                            thread = selectedThread!!,
+                            manufacturerName = selectedThreadUiModel.manufacturer) },
+                        onDeleteThreadButtonClick = { shelveViewModel.onDeleteThreadClick(selectedThread!!.id) },
+                        isOnShelf = shelveViewModel.isThreadInShelf(selectedThread!!.id)
+                    )
                     FindButtonAndSearchSettings(
                         onClickButton = { viewModel.findMatches() },
                         viewModel = viewModel,
@@ -227,10 +237,15 @@ fun ColorCodeInputField(
 @Composable
 fun SelectedThread(
     thread: ThreadUiModel,
+    onAddThreadButtonClick: () -> Unit,
+    onDeleteThreadButtonClick: () -> Unit,
+    isOnShelf: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val chosenString = stringResource(R.string.chosen_string)
-    Row() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Text("$chosenString: ${thread.manufacturer} ${thread.colorCode}")
         Spacer(modifier = Modifier.padding(Dimens.ExtraSmall))
         Box(
@@ -242,6 +257,23 @@ fun SelectedThread(
                 )
                 .border(1.dp, Color.Black, RoundedCornerShape(4.dp))
         )
+        IconButton(
+            onClick = { onAddThreadButtonClick() }
+        ) {
+            if (isOnShelf) {
+                IconButton(
+                    onClick = { onDeleteThreadButtonClick() }
+                ) {
+                    Icon(Icons.Filled.Star, contentDescription = null, tint = Color(0xFFD3BD60))
+                }
+            } else {
+                IconButton(
+                    onClick = { onAddThreadButtonClick() }
+                ) {
+                    Icon(Icons.Filled.Star, contentDescription = null)
+                }
+            }
+        }
     }
 }
 

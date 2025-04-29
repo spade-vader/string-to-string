@@ -83,7 +83,9 @@ fun ManufacturersCompareInputScreen(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = stringResource(R.string.input_manufacturers_screen_label))
+        Text(
+            text = stringResource(R.string.input_manufacturers_screen_label),
+            modifier = modifier.padding(Dimens.Small))
         ManufacturerDropdown(
             manufacturers = viewModel.manufacturers,
             selectedManufacturer = viewModel.selectedMainManufacturer,

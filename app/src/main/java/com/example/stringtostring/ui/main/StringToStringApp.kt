@@ -15,6 +15,7 @@ import com.example.stringtostring.ui.screens.colorsmatcher.ColorsMatcherScreen
 import com.example.stringtostring.ui.screens.colorsmatcher.ColorsMatcherViewModel
 import com.example.stringtostring.ui.screens.manufacturerscompare.ManufacturersCompareScreen
 import com.example.stringtostring.ui.screens.manufacturerscompare.ManufacturersCompareViewModel
+import com.example.stringtostring.ui.screens.shelve.ShelveViewModel
 import com.example.stringtostring.ui.theme.StringToStringTheme
 import com.example.stringtostring.util.Screen
 import com.example.stringtostring.util.SettingsViewModel
@@ -26,6 +27,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 fun StringToStringApp(
     colorsMatcherViewModel: ColorsMatcherViewModel,
     manufacturersCompareViewModel: ManufacturersCompareViewModel,
+    shelveViewModel: ShelveViewModel,
     viewModelSettings: SettingsViewModel,
     modifier: Modifier = Modifier
 ) {
@@ -47,6 +49,7 @@ fun StringToStringApp(
                 AppNavGraph(
                     colorsMatcherViewModel = colorsMatcherViewModel,
                     manufacturersCompareViewModel = manufacturersCompareViewModel,
+                    shelveViewModel = shelveViewModel,
                     navController = navController,
                     modifier = Modifier.padding(paddingValues)
                 )

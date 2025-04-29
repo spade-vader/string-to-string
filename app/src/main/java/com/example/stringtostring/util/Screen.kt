@@ -11,7 +11,9 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -21,18 +23,19 @@ import com.example.stringtostring.ui.screens.colorsmatcher.ColorsMatcherViewMode
 import com.example.stringtostring.ui.screens.manufacturerscompare.ManufacturersCompareScreen
 import com.example.stringtostring.ui.screens.manufacturerscompare.ManufacturersCompareViewModel
 import com.example.stringtostring.ui.screens.shelve.ShelveScreen
+import com.example.stringtostring.ui.screens.shelve.ShelveViewModel
 
-// TODO поменять иконки нормально
 sealed class Screen(val route: String, val icon: ImageVector) {
     object ColorsMaster : Screen("colorsMaster", Icons.Default.Search)
-    object ManufacturersCompare : Screen("manufacturersCompare", Icons.Filled.CheckCircle)
-    object Shelves : Screen("shelves", Icons.Filled.Favorite)
+    object ManufacturersCompare : Screen("manufacturersCompare", Icons.Filled.Menu)
+    object Shelves : Screen("shelves", Icons.Filled.Star)
 }
 
 @OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.appNavGraph(
     colorsMasterViewModel: ColorsMatcherViewModel,
     manufacturersCompareViewModel: ManufacturersCompareViewModel,
+    shelveViewModel: ShelveViewModel,
     navController: NavHostController
 ) {
     val screens = listOf(
@@ -47,7 +50,7 @@ fun NavGraphBuilder.appNavGraph(
         exitTransition = { slideOutHorizontally { fullWidth -> -fullWidth } }
     )
     {
-        ColorsMatcherScreen(colorsMasterViewModel)
+        ColorsMatcherScreen(colorsMasterViewModel, shelveViewModel)
     }
 
     composable(
@@ -63,6 +66,6 @@ fun NavGraphBuilder.appNavGraph(
         enterTransition = { slideInHorizontally { fullWidth -> fullWidth } },
         exitTransition = { slideOutHorizontally { fullWidth -> fullWidth } }
     ) {
-        ShelveScreen()
+        ShelveScreen(shelveViewModel)
     }
 }

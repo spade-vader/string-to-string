@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.stringtostring.domain.ColorsMaster
 import com.example.stringtostring.model.Manufacturer
+import com.example.stringtostring.model.ShelfThreadEntity
 import com.example.stringtostring.model.ThreadEntity
 import com.example.stringtostring.model.ThreadMatch
 import com.example.stringtostring.repository.ThreadsRepository
@@ -48,7 +49,7 @@ class ColorsMatcherViewModel @Inject constructor(
         loadManufacturers()
     }
 
-    fun loadManufacturers() {
+    private fun loadManufacturers() {
         viewModelScope.launch {
             manufacturers = repository.getAllManufacturers()
             manufacturersToSearchIn = manufacturers

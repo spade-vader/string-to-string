@@ -7,18 +7,20 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.example.stringtostring.ui.screens.shelve.ShelveViewModel
 import com.example.stringtostring.ui.theme.Dimens
 
 @Composable
 fun ColorsMatcherScreen(
     viewModel: ColorsMatcherViewModel,
+    shelfViewModel: ShelveViewModel,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
     ) {
-        ColorsMatcherInputScreen(viewModel)
+        ColorsMatcherInputScreen(viewModel, shelfViewModel)
         HorizontalDivider(
             thickness = Dimens.ExtraSmall,
             modifier = Modifier
@@ -26,6 +28,6 @@ fun ColorsMatcherScreen(
                 .fillMaxWidth(),
             color = MaterialTheme.colorScheme.onBackground
         )
-        ColorsMatcherOutputScreen(viewModel)
+        ColorsMatcherOutputScreen(viewModel, shelfViewModel)
     }
 }

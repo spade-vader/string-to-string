@@ -3,6 +3,7 @@
     <string name="app_name">String To String</string>
     <string name="input_screen_label">Search by String</string>
     <string name="input_manufacturers_screen_label">Search by Manufacturers</string>
+    <string name="shelf_screen_label">Your shelf</string>
     <string name="manufacturer">Manufacturer</string>
     <string name="to_apply_settings">Press \"Find replacement!\" button to apply settings.</string>
     <string name="colorCode">Color Code</string>
@@ -20,6 +21,7 @@
     <string name="perfect_mode">Search 100% match only</string>
     <string name="back">Back</string>
     <string name="search_settings">Search Settings</string>
+    <string name="no_shelf_threads">Empty... dusty...</string>
     <string name="dark_theme">Dark Theme</string>
     <string name="language">Language</string>
     <string name="developer_mode">Developer Mode</string>

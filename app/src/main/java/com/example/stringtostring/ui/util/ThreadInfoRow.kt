@@ -21,19 +21,13 @@ import com.example.stringtostring.ui.theme.StringToStringTheme
 @Composable
 fun ThreadInfoRow(
     thread: ThreadUiModel,
-    percent: Number,
+    percent: Number? = null,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val percentColor = when {
-            percent.toInt() == 100 -> Color(0xFFD3BD60)
-            percent.toInt() in 90..99 -> Color(0xFF619466)
-            percent.toInt() in 70 .. 89 -> Color(0xFF628D91)
-            else -> Color(0xFFB24C38)
-        }
 
         Box(
             modifier = Modifier
@@ -46,11 +40,20 @@ fun ThreadInfoRow(
             text = "${thread.manufacturer} ${thread.colorCode}",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onBackground)
-        Text(
-            text = "$percent%",
-            style = MaterialTheme.typography.bodyLarge,
-            color = percentColor
-        )
+        if (percent != null) {
+            val percentColor = when {
+                percent.toInt() == 100 -> Color(0xFFD3BD60)
+                percent.toInt() in 90..99 -> Color(0xFF619466)
+                percent.toInt() in 70 .. 89 -> Color(0xFF628D91)
+                else -> Color(0xFFB24C38)
+            }
+
+            Text(
+                text = "$percent%",
+                style = MaterialTheme.typography.bodyLarge,
+                color = percentColor
+            )
+        }
     }
 }
 

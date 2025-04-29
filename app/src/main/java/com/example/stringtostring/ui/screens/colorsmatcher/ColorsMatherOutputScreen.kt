@@ -8,14 +8,22 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.example.stringtostring.R
 import com.example.stringtostring.model.toUiModel
@@ -26,7 +34,7 @@ import com.example.stringtostring.ui.util.ThreadInfoRow
 @Composable
 fun ColorsMatcherOutputScreen(
     viewModel: ColorsMatcherViewModel,
-    shelveViewModel: ShelveViewModel,
+    shelfViewModel: ShelveViewModel,
     modifier: Modifier = Modifier
 ) {
     val matches by viewModel::matches
@@ -38,8 +46,9 @@ fun ColorsMatcherOutputScreen(
         exit = shrinkVertically()
     ) {
         LazyColumn(
-            modifier = modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(Dimens.Small),
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(Dimens.ExtraSmall),
             horizontalAlignment = Alignment.Start
         ) {
             items(viewModel.matches!!) { match ->
@@ -48,17 +57,30 @@ fun ColorsMatcherOutputScreen(
                         ?: "Unknown"
                 val percent = viewModel.getPercent(match.percent)
 
-                Row() {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = modifier.fillMaxWidth()
+                ) {
                     ThreadInfoRow(
                         thread = match.toUiModel(manufacturerName),
                         percent = percent
                     )
-                    IconButton(
-                        onClick = { /* TODO shelveViewModel.addToShelve(it) */ }
-                    ) {
-
+                    if (shelfViewModel.isThreadInShelf(match.thread.id)) {
+                        IconButton(
+                            onClick = { shelfViewModel.onDeleteThreadClick(match.thread.id) }
+                        ) {
+                            Icon(Icons.Filled.Star, contentDescription = null, tint = Color(0xFFD3BD60))
+                        }
+                    } else {
+                        IconButton(
+                            onClick = { shelfViewModel.onFavoriteIconClick(match.thread, manufacturerName) }
+                        ) {
+                            Icon(Icons.Outlined.Star, contentDescription = null)
+                        }
                     }
                 }
+                HorizontalDivider()
             }
         }
     }

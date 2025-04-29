@@ -2,6 +2,7 @@ package com.example.stringtostring.repository
 
 import com.example.stringtostring.database.ThreadsDao
 import com.example.stringtostring.model.Manufacturer
+import com.example.stringtostring.model.ShelfThreadEntity
 import com.example.stringtostring.model.ThreadEntity
 
 class ThreadsRepository(
@@ -29,5 +30,26 @@ class ThreadsRepository(
 
     suspend fun getManufacturerById(id: Int): Manufacturer {
         return threadsDao.getManufacturerById(id)
+    }
+
+    suspend fun getAllShelfThreads(): List<ShelfThreadEntity> {
+        return threadsDao.getAllShelfThreads()
+    }
+
+    suspend fun addShelfThread(thread: ShelfThreadEntity) {
+        threadsDao.addShelfThread(thread)
+    }
+
+    suspend fun deleteThreadByThreadId(threadId: Int) {
+        threadsDao.deleteThreadByThreadId(threadId)
+    }
+
+    suspend fun clearShelf() {
+        threadsDao.clearShelf()
+    }
+
+    suspend fun isThreadInShelf(originalThreadId: Int): Boolean {
+        val count = threadsDao.isThreadInShelf(originalThreadId)
+        return count > 0
     }
 }
