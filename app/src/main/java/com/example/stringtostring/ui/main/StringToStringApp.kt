@@ -7,20 +7,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.stringtostring.ui.screens.colorsmatcher.ColorsMatcherScreen
 import com.example.stringtostring.ui.screens.colorsmatcher.ColorsMatcherViewModel
-import com.example.stringtostring.ui.screens.manufacturerscompare.ManufacturersCompareScreen
 import com.example.stringtostring.ui.screens.manufacturerscompare.ManufacturersCompareViewModel
 import com.example.stringtostring.ui.screens.shelve.ShelveViewModel
 import com.example.stringtostring.ui.theme.StringToStringTheme
 import com.example.stringtostring.util.Screen
 import com.example.stringtostring.util.SettingsViewModel
-import com.example.stringtostring.util.appNavGraph
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable

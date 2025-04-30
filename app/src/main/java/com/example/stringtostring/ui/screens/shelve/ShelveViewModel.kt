@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.stringtostring.model.Manufacturer
 import com.example.stringtostring.model.ShelfThreadEntity
 import com.example.stringtostring.model.ThreadEntity
 import com.example.stringtostring.repository.ThreadsRepository
