@@ -1,16 +1,11 @@
 package com.example.stringtostring.util
 
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.expandIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
@@ -54,14 +49,8 @@ sealed class Screen(val route: String, val icon: ImageVector) {
 fun NavGraphBuilder.appNavGraph(
     colorsMasterViewModel: ColorsMatcherViewModel,
     manufacturersCompareViewModel: ManufacturersCompareViewModel,
-    shelveViewModel: ShelveViewModel,
-    navController: NavHostController
+    shelveViewModel: ShelveViewModel
 ) {
-    val screens = listOf(
-        Screen.ColorsMaster.route,
-        Screen.ManufacturersCompare.route,
-        Screen.Shelves.route
-    )
 
     // Экран подбора ближайших нитей
     composable(
