@@ -10,7 +10,7 @@ A mobile application that helps cross-stitch enthusiasts match and compare threa
 
 ## Installation
 
-This app will be available soon on RuStore. Don't miss it!
+RuStore source: https://www.rustore.ru/catalog/app/com.example.stringtostring
 
 <div style="display: flex; justify-content: space-between;">
   <img src="./screenshots/threads_compare.jpg" width="200" />
