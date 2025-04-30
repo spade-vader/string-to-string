@@ -12,6 +12,6 @@ A mobile application that helps cross-stitch enthusiasts match and compare threa
 
 This app will be available soon on RuStore. Don't miss it!
 
-![Search your perfect match for thread!](https://drive.google.com/file/d/1A-VmjKSxa5GLY-CTOe784xW2ty5OuWBe/view?usp=drive_link)
-![Find 100% match between different manufacturers!](https://drive.google.com/file/d/17zVlD-xwn1ngXgRnwsO3q3mi9TOZNEjc/view?usp=drive_link)
-![Save your favorite threads to your Shelf!](https://drive.google.com/file/d/1_au6uBf778K1zGXn6-3vxKAVrwgZgmG2/view?usp=drive_link)
+![Search your perfect match for thread!](./screenshots/threads_compare.jpg)
+![Find 100% match between different manufacturers!](./screenshots/manufacturers_compare.jpg)
+![Save your favorite threads to your Shelf!](./screenshots/shelf.jpg)
