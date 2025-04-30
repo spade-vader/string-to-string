@@ -18,6 +18,15 @@ import com.example.stringtostring.model.ThreadUiModel
 import com.example.stringtostring.ui.theme.Dimens
 import com.example.stringtostring.ui.theme.StringToStringTheme
 
+/**
+ * Компонент отображения информации о нити:
+ * - Цветовой прямоугольник, код цвета и производитель.
+ * - Процент совпадения с основной нитью (если передан).
+ *
+ * @param thread модель нити для отображения.
+ * @param percent необязательный процент совпадения (например, при сравнении).
+ * @param modifier модификатор компоновки.
+ */
 @Composable
 fun ThreadInfoRow(
     thread: ThreadUiModel,
@@ -28,24 +37,30 @@ fun ThreadInfoRow(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-
+        // Отображение прямоугольника цвета на основе RGB-кода
         Box(
             modifier = Modifier
                 .size(70.dp, 30.dp)
-                .background(Color(android.graphics.Color.parseColor("#"+thread.rgbCode)))
+                .background(Color(android.graphics.Color.parseColor("#" + thread.rgbCode)))
                 .border(1.dp, MaterialTheme.colorScheme.onBackground)
         )
-        Text(modifier = Modifier
-            .padding(start = Dimens.Small, end = Dimens.ExtraSmall),
+
+        // Отображение производителя и кода цвета
+        Text(
+            modifier = Modifier
+                .padding(start = Dimens.Small, end = Dimens.ExtraSmall),
             text = "${thread.manufacturer} ${thread.colorCode}",
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onBackground)
+            color = MaterialTheme.colorScheme.onBackground
+        )
+
+        // Условное отображение процента совпадения с цветовой маркировкой
         if (percent != null) {
             val percentColor = when {
-                percent.toInt() == 100 -> Color(0xFFD3BD60)
-                percent.toInt() in 90..99 -> Color(0xFF619466)
-                percent.toInt() in 70 .. 89 -> Color(0xFF628D91)
-                else -> Color(0xFFB24C38)
+                percent.toInt() == 100 -> Color(0xFFD3BD60) // золото
+                percent.toInt() in 90..99 -> Color(0xFF619466) // зелёный
+                percent.toInt() in 70..89 -> Color(0xFF628D91) // синий
+                else -> Color(0xFFB24C38) // красный
             }
 
             Text(
@@ -57,6 +72,9 @@ fun ThreadInfoRow(
     }
 }
 
+/**
+ * Превью-компонент для визуальной оценки компонента ThreadInfoRow.
+ */
 @Preview(showBackground = true)
 @Composable
 fun ThreadInfoRowPreview(
@@ -64,8 +82,8 @@ fun ThreadInfoRowPreview(
 ) {
     StringToStringTheme {
         ThreadInfoRow(
-            ThreadUiModel("761","f4c4c1", "DMC"),
-            92
+            thread = ThreadUiModel("761", "f4c4c1", "DMC"),
+            percent = 92
         )
     }
 }

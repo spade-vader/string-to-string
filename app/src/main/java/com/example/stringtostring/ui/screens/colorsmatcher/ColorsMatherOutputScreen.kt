@@ -30,15 +30,30 @@ import com.example.stringtostring.ui.screens.shelve.ShelveViewModel
 import com.example.stringtostring.ui.theme.Dimens
 import com.example.stringtostring.ui.util.ThreadInfoRow
 
+/**
+ * Компонент отображения результата поиска подходящих нитей.
+ *
+ * Условия отображения:
+ * - Показывается список, если:
+ *   - результат поиска (matches) не пустой,
+ *   - выбрана исходная нить (selectedThread).
+ * - В противном случае отображается сообщение об отсутствии совпадений.
+ *
+ * @param viewModel ViewModel экрана поиска по цветам.
+ * @param shelfViewModel ViewModel полки избранных нитей.
+ * @param modifier внешний модификатор.
+ */
 @Composable
 fun ColorsMatcherOutputScreen(
     viewModel: ColorsMatcherViewModel,
     shelfViewModel: ShelveViewModel,
     modifier: Modifier = Modifier
 ) {
+    // Привязка значений к локальным переменным для реактивного использования
     val matches by viewModel::matches
     val selectedThread by viewModel::selectedThread
 
+    // Анимированное отображение результатов
     AnimatedVisibility(
         visible = !matches.isNullOrEmpty() && selectedThread != null,
         enter = expandVertically(),
@@ -50,10 +65,10 @@ fun ColorsMatcherOutputScreen(
                 .padding(Dimens.ExtraSmall),
             horizontalAlignment = Alignment.Start
         ) {
+            // Отображение каждой подходящей нити
             items(viewModel.matches!!) { match ->
-                val manufacturerName =
-                    viewModel.manufacturers.find { it.id == match.thread.manufacturerId }?.name
-                        ?: "Unknown"
+                val manufacturerName = viewModel.manufacturers
+                    .find { it.id == match.thread.manufacturerId }?.name ?: "Unknown"
                 val percent = viewModel.getPercent(match.percent)
 
                 Row(
@@ -65,17 +80,31 @@ fun ColorsMatcherOutputScreen(
                         thread = match.toUiModel(manufacturerName),
                         percent = percent
                     )
+
+                    // Отображение иконки избранного/неизбранного состояния
                     if (shelfViewModel.isThreadInShelf(match.thread.id)) {
                         IconButton(
                             onClick = { shelfViewModel.onDeleteThreadClick(match.thread.id) }
                         ) {
-                            Icon(Icons.Filled.Star, contentDescription = null, tint = Color(0xFFD3BD60))
+                            Icon(
+                                imageVector = Icons.Filled.Star,
+                                contentDescription = null,
+                                tint = Color(0xFFD3BD60) // золотой акцент
+                            )
                         }
                     } else {
                         IconButton(
-                            onClick = { shelfViewModel.onFavoriteIconClick(match.thread, manufacturerName) }
+                            onClick = {
+                                shelfViewModel.onFavoriteIconClick(
+                                    match.thread,
+                                    manufacturerName
+                                )
+                            }
                         ) {
-                            Icon(Icons.Outlined.Star, contentDescription = null)
+                            Icon(
+                                imageVector = Icons.Outlined.Star,
+                                contentDescription = null
+                            )
                         }
                     }
                 }
@@ -84,12 +113,12 @@ fun ColorsMatcherOutputScreen(
         }
     }
 
+    // Отображение текста при отсутствии совпадений или ненайденной исходной нити
     if (matches.isNullOrEmpty() || selectedThread == null) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = modifier
-                .fillMaxSize()
+            modifier = modifier.fillMaxSize()
         ) {
             Text(
                 text = stringResource(R.string.no_matches),

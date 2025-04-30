@@ -25,12 +25,31 @@ import com.example.stringtostring.ui.screens.manufacturerscompare.ManufacturersC
 import com.example.stringtostring.ui.screens.shelve.ShelveScreen
 import com.example.stringtostring.ui.screens.shelve.ShelveViewModel
 
+/**
+ * Класс с определением всех навигационных экранов приложения.
+ * Каждый экран представлен объектом с route и иконкой для навбаров и табов.
+ */
 sealed class Screen(val route: String, val icon: ImageVector) {
     object ColorsMaster : Screen("colorsMaster", Icons.Default.Search)
     object ManufacturersCompare : Screen("manufacturersCompare", Icons.Filled.Menu)
     object Shelves : Screen("shelves", Icons.Filled.Star)
 }
 
+/**
+ * Расширение NavGraphBuilder, реализующее структуру навигации по приложению.
+ *
+ * Включает переходы к основным экранам:
+ * - Поиск ближайших цветов (ColorsMatcherScreen)
+ * - Сравнение производителей (ManufacturersCompareScreen)
+ * - Сохранённые нити (ShelveScreen)
+ *
+ * Каждый экран сопровождается анимациями входа и выхода, определёнными через Compose Navigation.
+ *
+ * @param colorsMasterViewModel ViewModel для экрана поиска ближайших цветов.
+ * @param manufacturersCompareViewModel ViewModel для экрана сравнения производителей.
+ * @param shelveViewModel ViewModel для экрана с полкой (избранным).
+ * @param navController контроллер навигации.
+ */
 @OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.appNavGraph(
     colorsMasterViewModel: ColorsMatcherViewModel,
@@ -44,15 +63,16 @@ fun NavGraphBuilder.appNavGraph(
         Screen.Shelves.route
     )
 
+    // Экран подбора ближайших нитей
     composable(
         route = Screen.ColorsMaster.route,
         enterTransition = { slideInHorizontally { fullWidth -> -fullWidth } },
         exitTransition = { slideOutHorizontally { fullWidth -> -fullWidth } }
-    )
-    {
+    ) {
         ColorsMatcherScreen(colorsMasterViewModel, shelveViewModel)
     }
 
+    // Экран сравнения производителей
     composable(
         route = Screen.ManufacturersCompare.route,
         enterTransition = { scaleIn() },
@@ -61,6 +81,7 @@ fun NavGraphBuilder.appNavGraph(
         ManufacturersCompareScreen(manufacturersCompareViewModel)
     }
 
+    // Экран сохранённых нитей
     composable(
         route = Screen.Shelves.route,
         enterTransition = { slideInHorizontally { fullWidth -> fullWidth } },

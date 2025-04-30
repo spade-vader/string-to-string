@@ -3,34 +3,11 @@ package com.example.stringtostring.ui.screens.manufacturerscompare
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,13 +19,22 @@ import com.example.stringtostring.model.ThreadPerfectMatch
 import com.example.stringtostring.ui.screens.colorsmatcher.ManufacturerDropdown
 import com.example.stringtostring.ui.theme.Dimens
 
+/**
+ * Экран сравнения производителей нитей:
+ * - Отображение ввода или результатов в зависимости от наличия совпадений.
+ *
+ * @param viewModel ViewModel сравнения производителей.
+ * @param modifier внешний модификатор.
+ */
 @Composable
 fun ManufacturersCompareScreen(
     viewModel: ManufacturersCompareViewModel,
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxWidth().padding(Dimens.Small)
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(Dimens.Small)
     ) {
         if (viewModel.matches.isEmpty()) {
             ManufacturersCompareInputScreen(viewModel)
@@ -58,6 +44,14 @@ fun ManufacturersCompareScreen(
     }
 }
 
+/**
+ * Экран выбора основного и сравниваемых производителей:
+ * - Предоставляет выпадающий список с возможностью множественного выбора.
+ * - Отображает кнопку поиска после выбора производителей.
+ *
+ * @param viewModel ViewModel сравнения производителей.
+ * @param modifier внешний модификатор.
+ */
 @Composable
 fun ManufacturersCompareInputScreen(
     viewModel: ManufacturersCompareViewModel,
@@ -73,25 +67,26 @@ fun ManufacturersCompareInputScreen(
     ) {
         Text(
             text = stringResource(R.string.input_manufacturers_screen_label),
-            modifier = modifier.padding(Dimens.Small))
+            modifier = modifier.padding(Dimens.Small)
+        )
+
         ManufacturerDropdown(
             manufacturers = viewModel.manufacturers,
             selectedManufacturer = viewModel.selectedMainManufacturer,
             onManufacturerSelected = { viewModel.onMainManufacturerSelected(it) }
         )
-        AnimatedVisibility(
-            visible = selectedTargetManufacturer != null
-        ) {
+
+        AnimatedVisibility(visible = selectedTargetManufacturer != null) {
             ManufacturersMultiSelectDropdown(
                 allManufacturers = viewModel.manufacturers.filter { it != selectedTargetManufacturer },
                 selectedManufacturers = viewModel.selectedManufacturers,
                 onManufacturerSelected = { manufacturer, isSelected ->
-                    viewModel.toggleManufacturerSelection(manufacturer, isSelected) }
+                    viewModel.toggleManufacturerSelection(manufacturer, isSelected)
+                }
             )
         }
-        AnimatedVisibility(
-            visible = selectedManufacturers.isNotEmpty()
-        ) {
+
+        AnimatedVisibility(visible = selectedManufacturers.isNotEmpty()) {
             Button(
                 onClick = { viewModel.findPerfectMatches() },
                 modifier = Modifier.padding(Dimens.Small)
@@ -102,6 +97,15 @@ fun ManufacturersCompareInputScreen(
     }
 }
 
+/**
+ * Экран вывода результатов сравнения производителей:
+ * - Отображает таблицу совпадений.
+ * - Предоставляет переключатель видимости несовпадений.
+ * - Включает кнопку возврата к экрану ввода.
+ *
+ * @param viewModel ViewModel сравнения производителей.
+ * @param modifier внешний модификатор.
+ */
 @Composable
 fun ManufacturersCompareOutputScreen(
     viewModel: ManufacturersCompareViewModel,
@@ -109,21 +113,19 @@ fun ManufacturersCompareOutputScreen(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.padding(Dimens.Small).fillMaxWidth()
+        modifier = modifier
+            .padding(Dimens.Small)
+            .fillMaxWidth()
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = modifier.fillMaxWidth()
         ) {
-            Button(
-                onClick = { viewModel.reset() }
-            ) {
+            Button(onClick = { viewModel.reset() }) {
                 Text(text = stringResource(R.string.back))
             }
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(stringResource(R.string.show_no_matches))
                 Switch(
                     checked = viewModel.isNoMatchShow,
@@ -141,6 +143,16 @@ fun ManufacturersCompareOutputScreen(
     }
 }
 
+/**
+ * Компонент выпадающего списка с множественным выбором производителей:
+ * - Использует OutlinedTextField с ExposedDropdownMenuBox.
+ * - Позволяет выбрать несколько элементов.
+ *
+ * @param allManufacturers список всех производителей.
+ * @param selectedManufacturers список выбранных производителей.
+ * @param onManufacturerSelected обратный вызов изменения выбора.
+ * @param modifier внешний модификатор.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ManufacturersMultiSelectDropdown(
@@ -151,9 +163,7 @@ fun ManufacturersMultiSelectDropdown(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    val selectedText = if (selectedManufacturers.isEmpty()) {
-        ""
-    } else {
+    val selectedText = if (selectedManufacturers.isEmpty()) "" else {
         selectedManufacturers.joinToString(", ") { it.name }
     }
 
@@ -167,9 +177,7 @@ fun ManufacturersMultiSelectDropdown(
             onValueChange = {},
             readOnly = true,
             label = { Text(stringResource(R.string.replacement_manufacturers)) },
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-            },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier
                 .menuAnchor()
                 .fillMaxWidth()
@@ -181,7 +189,6 @@ fun ManufacturersMultiSelectDropdown(
         ) {
             allManufacturers.forEach { manufacturer ->
                 val isSelected = selectedManufacturers.contains(manufacturer)
-
                 DropdownMenuItem(
                     text = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -193,9 +200,7 @@ fun ManufacturersMultiSelectDropdown(
                             Text(manufacturer.name)
                         }
                     },
-                    onClick = {
-                        onManufacturerSelected(manufacturer, !isSelected)
-                    },
+                    onClick = { onManufacturerSelected(manufacturer, !isSelected) },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
                 )
             }
@@ -203,6 +208,16 @@ fun ManufacturersMultiSelectDropdown(
     }
 }
 
+/**
+ * Таблица отображения совпадений между производителями нитей:
+ * - В первой колонке — цвета и коды нитей целевого производителя.
+ * - В остальных — соответствия из других производителей.
+ *
+ * @param targetManufacturer основной производитель.
+ * @param secondaryManufacturers список сравниваемых производителей.
+ * @param matches список совпадений по нитям.
+ * @param modifier внешний модификатор.
+ */
 @Composable
 fun MatchesTable(
     targetManufacturer: Manufacturer,
@@ -229,7 +244,9 @@ fun MatchesTable(
             )
         }
     }
+
     HorizontalDivider(thickness = 1.dp)
+
     LazyColumn(
         modifier = modifier.fillMaxSize()
     ) {
@@ -244,7 +261,7 @@ fun MatchesTable(
                 Box(
                     modifier = Modifier
                         .size(12.dp)
-                        .background(Color(android.graphics.Color.parseColor("#"+match.thread.rgbCode)))
+                        .background(Color(android.graphics.Color.parseColor("#" + match.thread.rgbCode)))
                         .border(1.dp, MaterialTheme.colorScheme.onBackground)
                 )
                 Text(
@@ -265,4 +282,3 @@ fun MatchesTable(
         }
     }
 }
-

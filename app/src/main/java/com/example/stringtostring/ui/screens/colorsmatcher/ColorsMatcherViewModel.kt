@@ -15,39 +15,69 @@ import kotlinx.coroutines.launch
 import java.math.RoundingMode
 import javax.inject.Inject
 
+/**
+ * ViewModel для экрана сопоставления цветов.
+ *
+ * Обязанности:
+ * - Загрузка производителей и нитей по выбранному производителю.
+ * - Хранение выбранного кода цвета и соответствующей нити.
+ * - Запуск алгоритма поиска ближайших нитей.
+ * - Управление фильтрами (округление процентов, ограничение по производителям).
+ *
+ * @constructor @Inject внедрение репозитория через Hilt.
+ */
 @HiltViewModel
 class ColorsMatcherViewModel @Inject constructor(
     private val repository: ThreadsRepository
 ) : ViewModel() {
 
-    // Input
+    // Состояние: все производители, полученные из репозитория
     var manufacturers by mutableStateOf(listOf<Manufacturer>())
         private set
+
+    // Состояние: выбранный производитель
     var selectedManufacturer by mutableStateOf<Manufacturer?>(null)
         private set
+
+    // Состояние: список нитей выбранного производителя
     var threads by mutableStateOf(listOf<ThreadEntity>())
         private set
+
+    // Состояние: выбранный код цвета
     var selectedColorCode by mutableStateOf("")
         private set
+
+    // Состояние: нить, соответствующая введённому коду цвета
     var selectedThread by mutableStateOf<ThreadEntity?>(null)
         private set
+
+    // Состояние: доступность кнопки поиска
     var isSearchButtonEnabled by mutableStateOf(false)
         private set
 
-    // Output
+    // Состояние: результат поиска похожих нитей
     var matches by mutableStateOf<List<ThreadMatch>?>(null)
         private set
 
-    // Filter options
+    // Флаг: включено ли округление процентов
     var isPercentRound by mutableStateOf(true)
         private set
+
+    // Список производителей, по которым осуществляется поиск
     var manufacturersToSearchIn by mutableStateOf<List<Manufacturer>>(emptyList())
         private set
 
+    /**
+     * Инициализация состояния: загрузка производителей.
+     */
     init {
         loadManufacturers()
     }
 
+    /**
+     * Загрузка всех производителей из репозитория.
+     * Автоматическое присвоение списка для поиска.
+     */
     private fun loadManufacturers() {
         viewModelScope.launch {
             manufacturers = repository.getAllManufacturers()
@@ -55,7 +85,12 @@ class ColorsMatcherViewModel @Inject constructor(
         }
     }
 
-
+    /**
+     * Обработка выбора производителя:
+     * - загрузка нитей,
+     * - сортировка по числовому значению colorCode (если возможно),
+     * - сброс ранее введённого состояния.
+     */
     fun onManufacturerSelected(manufacturer: Manufacturer) {
         selectedManufacturer = manufacturer
         viewModelScope.launch {
@@ -67,6 +102,12 @@ class ColorsMatcherViewModel @Inject constructor(
         isSearchButtonEnabled = false
     }
 
+    /**
+     * Обработка изменения ввода кода цвета:
+     * - поиск соответствующей нити по коду цвета,
+     * - сброс результатов поиска,
+     * - активация кнопки поиска при успешном нахождении нити.
+     */
     fun onColorCodeInputChanged(input: String) {
         selectedColorCode = input
         isSearchButtonEnabled = false
@@ -77,6 +118,10 @@ class ColorsMatcherViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Запуск поиска ближайших нитей через ColorsMaster.
+     * Поиск осуществляется по списку выбранных производителей.
+     */
     fun findMatches() {
         selectedThread?.let { thread ->
             viewModelScope.launch {
@@ -93,10 +138,19 @@ class ColorsMatcherViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Переключение режима округления процентов (вкл./выкл.).
+     */
     fun toggleRoundPercent() {
         isPercentRound = !isPercentRound
     }
 
+    /**
+     * Получение значения процента в зависимости от текущего режима округления.
+     *
+     * @param percent значение процента.
+     * @return округлённое или точное значение.
+     */
     fun getPercent(percent: Double): Number {
         if (isPercentRound) {
             return kotlin.math.floor(percent).toInt()
@@ -104,6 +158,11 @@ class ColorsMatcherViewModel @Inject constructor(
         return percent.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
     }
 
+    /**
+     * Обновление списка производителей, по которым производится поиск.
+     *
+     * @param selectedManufacturers отфильтрованный список.
+     */
     fun updateManufacturersToSearch(selectedManufacturers: List<Manufacturer>) {
         manufacturersToSearchIn = selectedManufacturers
     }

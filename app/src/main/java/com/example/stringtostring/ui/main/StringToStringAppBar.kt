@@ -46,6 +46,12 @@ import com.example.stringtostring.R
 import com.example.stringtostring.ui.theme.Dimens
 import com.example.stringtostring.util.SettingsViewModel
 
+/**
+ * Основная панель приложения, которая отображает название приложения и предоставляет доступ
+ * к меню для изменения темы и отображения информации о приложении.
+ *
+ * @param viewModelSettings ViewModel для управления настройками темы (светлая/темная тема).
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StringToStringAppBar(
@@ -54,6 +60,7 @@ fun StringToStringAppBar(
     var menuExpanded by remember { mutableStateOf(false) }
     var showAboutDialog by remember { mutableStateOf(false) }
 
+    // Создание верхней панели приложения с названием и меню
     TopAppBar(
         title = {
             Box(
@@ -68,6 +75,7 @@ fun StringToStringAppBar(
             }
         },
         actions = {
+            // Кнопка меню для отображения раскрывающегося списка
             IconButton(onClick = { menuExpanded = true }) {
                 Icon(
                     Icons.Default.MoreVert,
@@ -75,6 +83,7 @@ fun StringToStringAppBar(
                     tint = Color(248, 240, 237)
                 )
             }
+            // Отображение меню
             AppBarMenu(
                 viewModelSettings = viewModelSettings,
                 expanded = menuExpanded,
@@ -87,11 +96,20 @@ fun StringToStringAppBar(
         )
     )
 
+    // Диалоговое окно с информацией о приложении
     if (showAboutDialog) {
         AboutAppDialog(onDismiss = { showAboutDialog = false })
     }
 }
 
+/**
+ * Выпадающее меню для управления настройками и доступом к разделу "О приложении".
+ *
+ * @param expanded Флаг, определяющий, развернуто ли меню.
+ * @param onDismiss Функция, которая вызывается при закрытии меню.
+ * @param onAboutClick Функция, которая вызывается при нажатии на "О приложении".
+ * @param viewModelSettings ViewModel для управления настройками.
+ */
 @Composable
 fun AppBarMenu(
     expanded: Boolean,
@@ -101,10 +119,12 @@ fun AppBarMenu(
 ) {
     val isDarkTheme by viewModelSettings.themeFlow.collectAsState()
 
+    // Создание выпадающего меню с опциями
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = onDismiss
     ) {
+        // Опция для смены темы (светлая/темная)
         DropdownMenuItem(
             text = {
                 Row(
@@ -117,10 +137,11 @@ fun AppBarMenu(
                         modifier = Modifier.padding(start = Dimens.Small)
                     )
                 }
-                 },
-            onClick = {  }
+            },
+            onClick = { }
         )
 
+        // Опция для отображения информации о приложении
         DropdownMenuItem(
             text = { Text(stringResource(R.string.about_app)) },
             onClick = {
@@ -131,6 +152,11 @@ fun AppBarMenu(
     }
 }
 
+/**
+ * Диалоговое окно с информацией о приложении.
+ *
+ * @param onDismiss Функция для закрытия диалога.
+ */
 @Composable
 fun AboutAppDialog(
     onDismiss: () -> Unit
@@ -157,6 +183,7 @@ fun AboutAppDialog(
                     .padding(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                // Отображение изображения загрузки (анимированного GIF)
                 Image(
                     painter = rememberAsyncImagePainter(
                         model = ImageRequest.Builder(LocalContext.current)
@@ -172,15 +199,20 @@ fun AboutAppDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+                // Описание приложения
                 Text(
                     text = stringResource(R.string.app_description),
                     style = MaterialTheme.typography.labelLarge,
                     textAlign = TextAlign.Center
                 )
+
+                // Разделительная линия
                 HorizontalDivider(
                     thickness = 2.dp,
                     modifier = Modifier.padding(Dimens.Medium)
                 )
+
+                // Версия приложения
                 Text(
                     text = stringResource(R.string.app_version),
                     style = MaterialTheme.typography.labelMedium,

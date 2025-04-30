@@ -26,6 +26,14 @@ import com.example.stringtostring.model.toUiModel
 import com.example.stringtostring.ui.theme.Dimens
 import com.example.stringtostring.ui.util.ThreadInfoRow
 
+/**
+ * Компонент экрана "Полка":
+ * - Отображение сохранённых пользователем нитей.
+ * - Предоставление возможности удаления отдельной нити.
+ *
+ * @param viewModel ViewModel, предоставляющий список нитей и обработчик удаления.
+ * @param modifier внешний модификатор, передаваемый извне.
+ */
 @Composable
 fun ShelveScreen(
     viewModel: ShelveViewModel,
@@ -36,14 +44,17 @@ fun ShelveScreen(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // Заголовок экрана
         Text(
             text = stringResource(R.string.shelf_screen_label),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(Dimens.Small)
         )
 
+        // Разделитель под заголовком
         HorizontalDivider(thickness = Dimens.ExtraSmall)
 
+        // Состояние при отсутствии нитей
         if (viewModel.shelfThreads.isEmpty()) {
             Box(
                 modifier = Modifier
@@ -57,6 +68,7 @@ fun ShelveScreen(
                 )
             }
         } else {
+            // Отображение списка нитей
             LazyColumn(
                 modifier = modifier.padding(Dimens.Small)
             ) {
@@ -66,9 +78,11 @@ fun ShelveScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = modifier.fillMaxWidth()
                     ) {
+                        // Информация о нити
                         ThreadInfoRow(
                             thread = thread.toUiModel()
                         )
+                        // Кнопка удаления
                         IconButton(
                             onClick = { viewModel.onDeleteThreadClick(thread.threadId) }
                         ) {

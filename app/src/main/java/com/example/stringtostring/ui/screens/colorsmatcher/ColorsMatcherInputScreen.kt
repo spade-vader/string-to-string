@@ -4,51 +4,33 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.stringtostring.R
-import com.example.stringtostring.model.Manufacturer
-import com.example.stringtostring.model.ThreadEntity
-import com.example.stringtostring.model.ThreadUiModel
-import com.example.stringtostring.model.toUiModel
+import com.example.stringtostring.model.*
 import com.example.stringtostring.ui.screens.colorsmatcher.util.SettingsDialog
 import com.example.stringtostring.ui.screens.shelve.ShelveViewModel
 import com.example.stringtostring.ui.theme.Dimens
 
+/**
+ * Экран ввода цвета и выбора производителя для сопоставления нитей.
+ *
+ * @param viewModel ViewModel с бизнес-логикой для текущего экрана.
+ * @param shelveViewModel ViewModel для работы с сохранёнными нитями.
+ * @param modifier Дополнительные параметры модификации.
+ */
 @Composable
 fun ColorsMatcherInputScreen(
     viewModel: ColorsMatcherViewModel,
@@ -59,55 +41,48 @@ fun ColorsMatcherInputScreen(
     val selectedManufacturer by viewModel::selectedManufacturer
 
     Column(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AnimatedVisibility(
-            visible = selectedThread == null
-        ) {
-            Text(text = stringResource(R.string.input_screen_label),
+        // Отображение заглушки, если нить не выбрана
+        AnimatedVisibility(visible = selectedThread == null) {
+            Text(
+                text = stringResource(R.string.input_screen_label),
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(Dimens.Medium))
+                modifier = Modifier.padding(Dimens.Medium)
+            )
         }
 
+        // Выпадающий список производителей
         ManufacturerDropdown(
             manufacturers = viewModel.manufacturers,
-            selectedManufacturer = viewModel.selectedManufacturer,
+            selectedManufacturer = selectedManufacturer,
             onManufacturerSelected = { viewModel.onManufacturerSelected(it) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(Dimens.Small)
+            modifier = Modifier.fillMaxWidth().padding(Dimens.Small)
         )
 
-        AnimatedVisibility(
-            visible = selectedManufacturer != null
-        ) {
+        // Поле ввода кода цвета отображается после выбора производителя
+        AnimatedVisibility(visible = selectedManufacturer != null) {
             ColorCodeInputField(
                 viewModel = viewModel,
                 onColorCodeChange = { viewModel.onColorCodeInputChanged(it) },
                 threads = viewModel.threads,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(Dimens.Small)
+                modifier = Modifier.fillMaxWidth().padding(Dimens.Small)
             )
         }
 
-        AnimatedVisibility(
-            visible = selectedThread != null
-        ) {
-            if (selectedThread != null) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    val selectedThreadUiModel = viewModel.selectedThread!!.toUiModel(viewModel.selectedManufacturer!!.name)
+        // Отображение выбранной нити и кнопки поиска замен
+        AnimatedVisibility(visible = selectedThread != null) {
+            selectedThread?.let {
+                val selectedThreadUiModel = it.toUiModel(viewModel.selectedManufacturer!!.name)
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     SelectedThread(
                         thread = selectedThreadUiModel,
-                        onAddThreadButtonClick = { shelveViewModel.onFavoriteIconClick(
-                            thread = selectedThread!!,
-                            manufacturerName = selectedThreadUiModel.manufacturer) },
-                        onDeleteThreadButtonClick = { shelveViewModel.onDeleteThreadClick(selectedThread!!.id) },
-                        isOnShelf = shelveViewModel.isThreadInShelf(selectedThread!!.id)
+                        onAddThreadButtonClick = {
+                            shelveViewModel.onFavoriteIconClick(it, selectedThreadUiModel.manufacturer)
+                        },
+                        onDeleteThreadButtonClick = { shelveViewModel.onDeleteThreadClick(it.id) },
+                        isOnShelf = shelveViewModel.isThreadInShelf(it.id)
                     )
                     FindButtonAndSearchSettings(
                         onClickButton = { viewModel.findMatches() },
@@ -120,6 +95,14 @@ fun ColorsMatcherInputScreen(
     }
 }
 
+/**
+ * Компонент выпадающего списка производителей с Material 3 API.
+ *
+ * @param manufacturers Список всех производителей.
+ * @param selectedManufacturer Текущий выбранный производитель.
+ * @param onManufacturerSelected Обработка выбора производителя.
+ * @param modifier Модификатор компонента.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ManufacturerDropdown(
@@ -151,8 +134,7 @@ fun ManufacturerDropdown(
         ) {
             manufacturers.forEach { manufacturer ->
                 DropdownMenuItem(
-                    text = { Text(
-                        text = manufacturer.name) },
+                    text = { Text(text = manufacturer.name) },
                     onClick = {
                         onManufacturerSelected(manufacturer)
                         expanded = false
@@ -163,6 +145,14 @@ fun ManufacturerDropdown(
     }
 }
 
+/**
+ * Поле ввода кода цвета с возможностью выбора из всплывающего окна.
+ *
+ * @param viewModel ViewModel текущего экрана.
+ * @param onColorCodeChange Обработка выбора кода цвета.
+ * @param threads Список нитей, доступных для выбора.
+ * @param modifier Модификатор компонента.
+ */
 @Composable
 fun ColorCodeInputField(
     viewModel: ColorsMatcherViewModel,
@@ -191,6 +181,7 @@ fun ColorCodeInputField(
             modifier = Modifier.fillMaxWidth()
         )
 
+        // Всплывающее окно со списком нитей
         if (expanded) {
             AlertDialog(
                 onDismissRequest = { expanded = false },
@@ -198,7 +189,8 @@ fun ColorCodeInputField(
                     Button(onClick = { expanded = false }) {
                         Text(
                             text = stringResource(R.string.close),
-                            style = MaterialTheme.typography.bodySmall)
+                            style = MaterialTheme.typography.bodySmall
+                        )
                     }
                 },
                 text = {
@@ -234,6 +226,15 @@ fun ColorCodeInputField(
     }
 }
 
+/**
+ * Компонент отображения выбранной нити с цветом и кнопками "в избранное"/"удалить".
+ *
+ * @param thread UI-модель нити.
+ * @param onAddThreadButtonClick Действие при добавлении в избранное.
+ * @param onDeleteThreadButtonClick Действие при удалении из избранного.
+ * @param isOnShelf Флаг, определяющий наличие нити в сохранённых.
+ * @param modifier Модификатор компонента.
+ */
 @Composable
 fun SelectedThread(
     thread: ThreadUiModel,
@@ -257,26 +258,30 @@ fun SelectedThread(
                 )
                 .border(1.dp, Color.Black, RoundedCornerShape(4.dp))
         )
+
+        // Кнопка управления состоянием "избранное"
         IconButton(
-            onClick = { onAddThreadButtonClick() }
-        ) {
-            if (isOnShelf) {
-                IconButton(
-                    onClick = { onDeleteThreadButtonClick() }
-                ) {
-                    Icon(Icons.Filled.Star, contentDescription = null, tint = Color(0xFFD3BD60))
-                }
-            } else {
-                IconButton(
-                    onClick = { onAddThreadButtonClick() }
-                ) {
-                    Icon(Icons.Filled.Star, contentDescription = null)
-                }
+            onClick = {
+                if (isOnShelf) onDeleteThreadButtonClick()
+                else onAddThreadButtonClick()
             }
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Star,
+                contentDescription = null,
+                tint = if (isOnShelf) Color(0xFFD3BD60) else LocalContentColor.current
+            )
         }
     }
 }
 
+/**
+ * Компонент с кнопкой запуска поиска и иконкой открытия настроек поиска.
+ *
+ * @param onClickButton Действие при нажатии на кнопку поиска.
+ * @param viewModel ViewModel для управления состоянием настроек.
+ * @param modifier Модификатор компонента.
+ */
 @Composable
 fun FindButtonAndSearchSettings(
     onClickButton: () -> Unit,
@@ -286,18 +291,17 @@ fun FindButtonAndSearchSettings(
     var isDialogOpen by remember { mutableStateOf(false) }
 
     Row(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
         Button(
-            onClick = onClickButton,
-            modifier = Modifier
+            onClick = onClickButton
         ) {
             Text(text = stringResource(R.string.find_replacement))
         }
 
+        // Кнопка открытия диалога настроек
         IconButton(onClick = { isDialogOpen = true }) {
             Icon(
                 imageVector = Icons.Default.Settings,
@@ -305,6 +309,7 @@ fun FindButtonAndSearchSettings(
             )
         }
 
+        // Диалог настроек поиска
         if (isDialogOpen) {
             SettingsDialog(
                 manufacturers = viewModel.manufacturers,
